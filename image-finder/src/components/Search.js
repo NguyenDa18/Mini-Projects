@@ -16,15 +16,14 @@ class Search extends Component {
 
   onTextChange = e => {
     const val = e.target.value;
+    const { apiKey, amount, apiUrl, searchText } = this.state;
     this.setState({ [e.target.name]: val }, () => {
       if (val === '') {
         this.setState({ images: [] });
       } else {
         axios
           .get(
-            `${this.state.apiUrl}/?key=${this.state.apiKey}&q=${
-              this.state.searchText
-            }&image_type=photo&per_page=${this.state.amount}&safesearch=true`
+            `${apiUrl}/?key=${apiKey}&q=${searchText}&image_type=photo&per_page=${amount}&safesearch=true`
           )
           .then(res => this.setState({ images: res.data.hits }))
           .catch(err => console.log(err));
@@ -32,15 +31,23 @@ class Search extends Component {
     });
   };
 
-  onAmountChange = (e, index, value) => this.setState({ amount: value });
+  onAmountChange = (e, index, value) => {
+    const { apiKey, amount, apiUrl, searchText } = this.state;
+    this.setState({ amount: value }); 
+      axios
+    .get(
+      `${apiUrl}/?key=${apiKey}&q=${searchText}&image_type=photo&per_page=${amount}&safesearch=true`
+    )
+    .then(res => this.setState({ images: res.data.hits }))
+  }
 
   render() {
-    console.log(this.state.images);
+    const { searchText, amount, images } = this.state;
     return (
       <div>
         <TextField
           name="searchText"
-          value={this.state.searchText}
+          value={searchText}
           onChange={this.onTextChange}
           floatingLabelText="Search For Images"
           fullWidth={true}
@@ -49,7 +56,7 @@ class Search extends Component {
         <SelectField
           name="amount"
           floatingLabelText="Amount"
-          value={this.state.amount}
+          value={amount}
           onChange={this.onAmountChange}
         >
           <MenuItem value={5} primaryText="5" />
@@ -59,8 +66,8 @@ class Search extends Component {
           <MenuItem value={50} primaryText="50" />
         </SelectField>
         <br />
-        {this.state.images.length > 0 ? (
-          <ImageResults images={this.state.images} />
+        {images.length > 0 ? (
+          <ImageResults images={images} />
         ) : null}
       </div>
     );
