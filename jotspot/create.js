@@ -23,34 +23,7 @@ export async function main(event, context, callback) {
         return success(params.Item);
     }
     catch (e) {
+        console.log(e)
         return failure({ status: false });
     }
-    
-    dynamoDb.put(params, (err, data) => {
-        // Set response headers to enable CORS
-        const headers = {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Credentials": true
-        };
-        
-        // return status code 500 on err
-        if (err) {
-            const response = {
-                statusCode: 500,
-                headers: headers,
-                body: JSON.stringify({ status: false })
-            };
-            callback(null, response);
-            return;
-        }
-        
-        // return status code 200 and newly created item on success
-        const response = {
-            statusCode: 200,
-            headers: headers,
-            body: JSON.stringify(params.Item)
-        };
-        callback(null, response);
-    });
-    
 }

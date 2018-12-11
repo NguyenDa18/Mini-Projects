@@ -48,7 +48,22 @@ functions:
     handler: create.main
     events:
       - http:
-        path: notes
-        method: post
-        cors: true
-        authorizer: aws_iam
+          path: notes
+          method: post
+          cors: true
+          authorizer: aws_iam
+  get:
+    handler: get.main
+    events:
+      - http:
+          path: notes/{id}
+          cors: true
+          authorizer: aws_iam
+  list:
+    handler: list.main
+    events:
+      - http:
+          path: notes
+          method: get
+          cors: true
+          authorizer: aws_iam
