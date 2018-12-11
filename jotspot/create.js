@@ -1,9 +1,9 @@
 import uuid from 'uuid';
-import AWS from 'aws-sdk';
+import * as dynamoDbLib from './libs/dynamodb-lib';
+import { success, failure } from './libs/response-lib';
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-export function main(event, context, callback) {
+export async function main(event, context, callback) {
     // Req body passed in as JSON encoded string in 'event.body'
     const data = JSON.parse(event.body);
     
@@ -17,6 +17,14 @@ export function main(event, context, callback) {
             createdAt: Date.now() // current Unix timestamp
         }
     };
+    
+    try {
+        await dynamoDbLib.call('put', params);
+        return success(params.Item);
+    }
+    catch (e) {
+        return failure({ status: false });
+    }
     
     dynamoDb.put(params, (err, data) => {
         // Set response headers to enable CORS
